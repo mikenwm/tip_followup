@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>TIP</title>
+  </head>
+  <body>
+    
+    
+    
+    <h1>TIP Data Filter</h1>
+    
+    
+    <style>
+    #drag-file {
+        background-color: blue;
+        color:white;
+        text-align: center;
+        width:300px;
+        height:300px;
+	    }
+	</style>
+	
+	<div id="drag-file">
+	    <p>Drag your files here</p>
+	</div>
+	
+	
+    
+    <script>
+    
+    (function () {
+        var holder = document.getElementById('drag-file');
+
+        holder.ondragover = () => {
+            return false;
+        };
+
+        holder.ondragleave = () => {
+            return false;
+        };
+
+        holder.ondragend = () => {
+            return false;
+        };
+
+        holder.ondrop = (e) => {
+            e.preventDefault();
+
+            for (let f of e.dataTransfer.files) {
+                console.log('File(s) you dragged here: ', f.path);
+                handleFileSelect(f);
+            }
+            
+            return false;
+        };
+    })();
+    
+	</script>
+    
+    <script>
+      require('./renderer.js')
+      var fs = require('fs');
+    </script>
+    
+    
+    <!-- Insert this line above script imports  -->
+	<script>if (typeof module === 'object') {window.module = module; module = undefined;}</script>
+	
+	<!-- normal script imports etc  -->
+	<script src="papaparse.min.js"></script> 
+	<script src="jquery-3.2.1.slim.min.js"></script>  
+	
+	<!-- Insert this line after script imports -->
+	<script>if (window.module) module = window.module;</script>
+	    
+    
+    <script src="app.js"></script>
+    
+    <script>
+	var d; //file data
+	
+	var name1 = "clientName1"; //name of the client 1 column
+	var name2 = "clientName2"; //name of the client 2 column
+	var name3 = "clientName3"; //name of the client 3 column
+	
+	var address = "clientAddr11" //address column
+	var city = "clientCity1" //city column
+	var state = "clientState1" //state columnm
+	var zip = "clientPostal1" //zipcode column
+	
+	var volName1 = "volName1"; //name of volunteer 1 column
+	var volName2 = "volName2"; //name of volunteer 2 column
+	var volName3 = "volName3"; //name of volunteer 3 column
+	
+	var newData = new Array();
+	
+	
+	function handleFileSelect(f) {
+		
+		Papa.parse(f, {
+		  header: true,
+		  dynamicTyping: true,
+		  complete: function(results) {
+		    d = results;
+		    console.log("Finished:", results.data);
+		    
+		    processTIPcsv(f);
+		    
+		  }
+		});
+	}
+	
+	function processTIPcsv(file) {
+		
+		var rows = d.data;
+		console.log("Total rows: " + rows.length);
+		
+		newRowCount = 0;
+		 
+        for (var i = 0; i < rows.length; i++){
+       	
+	    	var clientName1 = new Array();
+	    	clientName1 = splitName(rows[i][name1]);
+	    	
+	    	if (clientName1[0] != '') {
+	    	
+	    		newData[newRowCount] = {
+			    	firstname:clientName1[0],
+			    	lastname:clientName1[1],
+			    	address:rows[i][address],
+			    	city:rows[i][city],
+			    	state:rows[i][state],
+			    	zip:rows[i][zip],
+			    	volunteerName1:rows[i][volName1],
+			    	volunteerName2:rows[i][volName2],
+			    	volunteerName3:rows[i][volName3]
+		    	};
+		    	
+		    	console.log(newData[newRowCount]);
+		    	console.log('main row count: ' + i);
+		    	
+		    	newRowCount++;
+	    	
+	    	}
+	    	
+	    	var clientName2 = new Array();
+	    	clientName2 = splitName(rows[i][name2]);
+	    	
+	    	if (clientName2[0] != '') {
+	    	
+	    		newData[newRowCount] = {
+			    	firstname:clientName2[0],
+			    	lastname:clientName2[1],
+			    	address:rows[i][address],
+			    	city:rows[i][city],
+			    	state:rows[i][state],
+			    	zip:rows[i][zip],
+			    	volunteerName1:rows[i][volName1],
+			    	volunteerName2:rows[i][volName2],
+			    	volunteerName3:rows[i][volName3]
+		    	};
+		    	
+		    	console.log(newData[newRowCount]);
+		    	console.log('main row count: ' + i);
+		    	
+		    	newRowCount++;
+	    	
+	    	}
+	    	
+	    	var clientName3 = new Array();
+	    	clientName3 = splitName(rows[i][name3]);
+	    	
+	    	if (clientName3[0] != '') {
+	    	
+	    		newData[newRowCount] = {
+			    	firstname:clientName3[0],
+			    	lastname:clientName3[1],
+			    	address:rows[i][address],
+			    	city:rows[i][city],
+			    	state:rows[i][state],
+			    	zip:rows[i][zip],
+			    	volunteerName1:rows[i][volName1],
+			    	volunteerName2:rows[i][volName2],
+			    	volunteerName3:rows[i][volName3]
+		    	};
+		    	
+		    	console.log(newData[newRowCount]);
+		    	console.log('main row count: ' + i);
+		    	
+		    	newRowCount++;
+	    	
+	    	}
+	 
+	    	
+	    	
+        }
+        
+       console.log(newData); 
+        
+       var csv = Papa.unparse(newData,{
+			quotes: false,
+			quoteChar: '"',
+			delimiter: '\t',
+			header: true,
+			newline: "\r\n"
+		});
+		
+		saveTIPfile(file,csv);
+		
+	}
+	
+	
+	
+	function splitName(fullName) {
+	
+		var names = new Array();
+	
+		if (fullName) {
+	
+			if (fullName.indexOf(' ') != -1 && fullName != '') {		
+		
+				temp = fullName.split(' ');
+		    	
+		    	if (temp.length==2) {
+			    	firstName = temp[0];
+			    	lastName = temp[1];	
+		    		
+		    	} else {
+			    	firstName = fullName;
+			    	lastName = '';
+		    	}
+	    	
+	    	} else {
+		    	firstName = fullName;
+			    lastName = '';
+		    	
+	    	}
+    	
+    	} else {
+	    	
+	    	firstName = '';
+			lastName = '';
+	    	
+    	}
+    	
+    	names[0] = firstName;
+    	names[1] = lastName;
+    	
+    	return names;
+    }
+	
+	
+	function saveTIPfile(file,csv) {
+		
+		var newFileName;
+		filePath = file.path;
+		
+		newFileName = filePath.replace(/.csv/i, '-reformat.csv');
+		
+		
+		fs.writeFile(newFileName, csv,  function(err) {
+		   if (err) {
+		      return console.error(err);
+		   }
+		   
+		   console.log("Data written successfully!");
+		   
+		});
+		
+		
+		
+	}
+	
+	
+	
+  </script>
+   
+    
+  </body>
+</html>

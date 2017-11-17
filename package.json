@@ -1,0 +1,19 @@
+{
+  "name": "followup-editor",
+  "version": "1.0.0",
+  "description": "TIPNW Followup Editor",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": "https://github.com/mikenwm/tip_followup",
+  "keywords": [
+    "TIPNW",
+    "Followup"
+  ],
+  "author": "GitHub",
+  "license": "MIT",
+  "devDependencies": {
+    "electron": "~1.7.8"
+  }
+}
